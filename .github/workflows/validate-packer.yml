@@ -1,0 +1,44 @@
+name: Packer Validation
+
+on:
+  pull_request:
+    paths:
+      - 'packer-template.json'  # Adjust the path to your Packer template file
+
+jobs:
+  validate:
+    name: Validate Packer Template
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.0/packer_1.7.0_linux_amd64.zip
+          unzip packer_1.7.0_linux_amd64.zip
+          chmod +x packer
+          sudo mv packer /usr/local/bin/
+        working-directory: /usr/local/bin
+
+      - name: Packer fmt
+        run: packer fmt -check
+
+      - name: Packer validate
+        run: packer validate packer-template.json  # Replace with the actual filename of your Packer template
+
+      - name: Check for errors
+        run: |
+          if [[ $? -eq 0 ]]; then
+            echo "Packer template formatting and validation succeeded."
+          else
+            echo "Packer template formatting or validation failed."
+            exit 1
+          fi
+
+      - name: Fail if Packer validation fails
+        if: ${{ failure() }}
+        run: |
+          echo "Packer validation failed. Preventing pull request from merging."
+          exit 1
