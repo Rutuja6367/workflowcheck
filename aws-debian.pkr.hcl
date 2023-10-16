@@ -1,4 +1,3 @@
-
 packer {
   required_plugins {
     amazon = {
@@ -9,53 +8,53 @@ packer {
 }
 
 variable "AWS_REGION" {
-  type=string
-default="us-east-1"
+  type    = string
+  default = "us-east-1"
 }
 variable "SOURCE_AMI_OWNER" {
-  type=string
-default="454063085085"
+  type    = string
+  default = "454063085085"
 }
 variable "SOURCE_AMI_NAME" {
-  type=string
-default="ami-06db4d78cb1d3bbf9"
+  type    = string
+  default = "ami-06db4d78cb1d3bbf9"
 }
 variable "INSTANCE_TYPE" {
-  type=string
-default="t2.micro"
+  type    = string
+  default = "t2.micro"
 }
 variable "SSH_USERNAME" {
-  type=string
-default="admin"
+  type    = string
+  default = "admin"
 }
 
-variable "subnet_id"{
-  type=string
-  default="subnet-0028adf715da30eb8"
+variable "subnet_id" {
+  type    = string
+  default = "subnet-0028adf715da30eb8"
 }
 
 source "amazon-ebs" "debian-ami" {
 
-  ami_name = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss",timestamp())}"
-  source_ami     = "${var.SOURCE_AMI_NAME}"
-  instance_type = "${var.INSTANCE_TYPE}"
-  region        = "${var.AWS_REGION}"
+  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
+  source_ami      = "${var.SOURCE_AMI_NAME}"
+  instance_type   = "${var.INSTANCE_TYPE}"
+  region          = "${var.AWS_REGION}"
   ami_description = "AMI FOR CSYE"
-  ssh_username = "${var.SSH_USERNAME}"
-  subnet_id = "${var.subnet_id}"
+  ssh_username    = "${var.SSH_USERNAME}"
+  subnet_id       = "${var.subnet_id}"
 
-  aws_polling{
-    delay_seconds=120
-    max_attempts=50
+  aws_polling {
+    delay_seconds = 120
+    max_attempts  = 50
   }
 
-  launch_block_device_mappings{
+  launch_block_device_mappings {
     delete_on_termination = true
-    device_name = "/dev/xvda"
-    volume_size = 8
-    volume_type = "gp2"
+    device_name           = "/dev/xvda"
+    volume_size           = 8
+    volume_type           = "gp2"
   }
-/*   source_ami_filter {
+  /*   source_ami_filter {
     filters = {
       name                = "debian/images/*debian-12-amd64-*"
       root-device-type    = "ebs"
@@ -63,15 +62,15 @@ source "amazon-ebs" "debian-ami" {
     }
     most_recent = true
     owners      = [var.SOURCE_AMI_OWNER]
-  } */ 
-  
+  } */
+
 }
 
 build {
 
   sources = ["source.amazon-ebs.debian-ami"]
 
-  provisioner "shell"{
+  provisioner "shell" {
     /* enviornment_vars = [
       ""
     ] */
@@ -82,11 +81,11 @@ build {
       "sudo apt-get clean",
     ]
   }
-/* 
+  /* 
   name    = "custom-debian-12-ami"
   sources = ["source.amazon-ebs.debian"] */
 
- /*  provisioner "shell" {
+  /*  provisioner "shell" {
    script = "./app.sh" 
 } */
   /* provisioner "file" {
@@ -100,7 +99,7 @@ build {
    destination = "/var/www/webapp"
 } */
 }
- /*  inline = [
+/*  inline = [
     "apt-get update -y",
   "apt-get install -y nodejs npm unzip",  # Install Node.js, npm, and unzip
     "npm install -g pm2",  # Install PM2 for process management
