@@ -1,5 +1,6 @@
 
 packer {
+
   required_plugins {
     amazon = {
       version = ">= 0.0.2"
