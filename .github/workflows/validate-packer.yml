@@ -2,8 +2,8 @@ name: Packer Validation
 
 on:
   pull_request:
-    paths:
-      - 'packer-template.json'  # Adjust the path to your Packer template file
+    branches:
+      - main
 
 jobs:
   validate:
